@@ -29,7 +29,8 @@ RUN apt-get update \
         pdo_mysql \
         soap \
         zip \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && { echo 'zend.exception_ignore_args = On'; echo 'max_input_vars = 5000'; } > /usr/local/etc/php/conf.d/moodle.ini
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
@@ -38,7 +39,7 @@ WORKDIR /var/www/html
 COPY . .
 
 RUN mkdir -p "$MOODLE_DATA" \
-    && composer install --no-dev --prefer-dist --optimize-autoloader \
+    && composer install --no-dev --classmap-authoritative \
     && chown -R www-data:www-data /var/www/html "$MOODLE_DATA"
 
 RUN sed -ri 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/000-default.conf /etc/apache2/apache2.conf

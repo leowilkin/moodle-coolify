@@ -9,7 +9,7 @@ services:
       - "80"
     environment:
       APP_URL: ${APP_URL:-http://localhost:8080}
-      MOODLE_DB_TYPE: ${MOODLE_DB_TYPE:-mysqli}
+      MOODLE_DB_TYPE: ${MOODLE_DB_TYPE:-mariadb}
       MOODLE_DB_HOST: db
       MOODLE_DB_PORT: 3306
       MOODLE_DB_NAME: ${MOODLE_DB_NAME:-moodle}
@@ -27,7 +27,7 @@ services:
     restart: unless-stopped
     environment:
       APP_URL: ${APP_URL:-http://localhost:8080}
-      MOODLE_DB_TYPE: ${MOODLE_DB_TYPE:-mysqli}
+      MOODLE_DB_TYPE: ${MOODLE_DB_TYPE:-mariadb}
       MOODLE_DB_HOST: db
       MOODLE_DB_PORT: 3306
       MOODLE_DB_NAME: ${MOODLE_DB_NAME:-moodle}
