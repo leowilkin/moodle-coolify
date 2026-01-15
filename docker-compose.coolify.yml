@@ -49,6 +49,7 @@ services:
       MARIADB_USER: ${MOODLE_DB_USER:-moodleuser}
       MARIADB_PASSWORD: ${MOODLE_DB_PASSWORD:-moodlepass}
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:-changeme}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
       - moodle-db:/var/lib/mysql
 
