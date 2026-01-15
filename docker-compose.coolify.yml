@@ -1,0 +1,57 @@
+version: '3.9'
+
+services:
+  app:
+    build: .
+    image: moodle-app:latest
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      APP_URL: ${APP_URL:-http://localhost:8080}
+      MOODLE_DB_TYPE: ${MOODLE_DB_TYPE:-mysqli}
+      MOODLE_DB_HOST: db
+      MOODLE_DB_PORT: 3306
+      MOODLE_DB_NAME: ${MOODLE_DB_NAME:-moodle}
+      MOODLE_DB_USER: ${MOODLE_DB_USER:-moodleuser}
+      MOODLE_DB_PASSWORD: ${MOODLE_DB_PASSWORD:-moodlepass}
+      MOODLE_DB_PREFIX: ${MOODLE_DB_PREFIX:-mdl_}
+      MOODLE_DATA: /var/www/moodledata
+    depends_on:
+      - db
+    volumes:
+      - moodledata:/var/www/moodledata
+
+  cron:
+    image: moodle-app:latest
+    restart: unless-stopped
+    environment:
+      APP_URL: ${APP_URL:-http://localhost:8080}
+      MOODLE_DB_TYPE: ${MOODLE_DB_TYPE:-mysqli}
+      MOODLE_DB_HOST: db
+      MOODLE_DB_PORT: 3306
+      MOODLE_DB_NAME: ${MOODLE_DB_NAME:-moodle}
+      MOODLE_DB_USER: ${MOODLE_DB_USER:-moodleuser}
+      MOODLE_DB_PASSWORD: ${MOODLE_DB_PASSWORD:-moodlepass}
+      MOODLE_DB_PREFIX: ${MOODLE_DB_PREFIX:-mdl_}
+      MOODLE_DATA: /var/www/moodledata
+    depends_on:
+      - db
+    volumes:
+      - moodledata:/var/www/moodledata
+    command: ["bash", "-lc", "while true; do php admin/cli/cron.php; sleep 60; done"]
+
+  db:
+    image: mariadb:11.4
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${MOODLE_DB_NAME:-moodle}
+      MARIADB_USER: ${MOODLE_DB_USER:-moodleuser}
+      MARIADB_PASSWORD: ${MOODLE_DB_PASSWORD:-moodlepass}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:-changeme}
+    volumes:
+      - moodle-db:/var/lib/mysql
+
+volumes:
+  moodledata:
+  moodle-db:
